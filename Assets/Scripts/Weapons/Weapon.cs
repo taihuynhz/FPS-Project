@@ -1,8 +1,6 @@
 using FPSFramework;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
@@ -85,6 +83,8 @@ public class Weapon : MonoBehaviour
                         RecoilFire();
                         CreateImpactEffect();
                         CreateBulletTracer();
+                        EnableHitmarker();
+                        SendDamage();
                         crosshair.GetComponent<Crosshair>().UpdateSize(2);
                     }
 
@@ -105,6 +105,8 @@ public class Weapon : MonoBehaviour
                         CreateImpactEffect();
                         CreateBulletTracer();
                         PlayAfterFireEffect();
+                        EnableHitmarker();
+                        SendDamage();
                         crosshair.GetComponent<Crosshair>().UpdateSize(2);
                     }
 
@@ -126,6 +128,8 @@ public class Weapon : MonoBehaviour
                     CreateImpactEffect();
                     CreateBulletTracer();
                     PlayAfterFireEffect();
+                    EnableHitmarker();
+                    SendDamage();
                     crosshair.GetComponent<Crosshair>().UpdateSize(2);
                 }
 
@@ -155,23 +159,83 @@ public class Weapon : MonoBehaviour
         {
             GameObject effect = GetImpactEffect(hit.transform.gameObject);
             if (effect == null) return;
-            GameObject effectIstance = Instantiate(effect, hit.point, new Quaternion(), hit.transform.parent);
-            effectIstance.transform.LookAt(hit.point + hit.normal);
-            Destroy(effectIstance, 20);
-        }
 
-        if (hit.transform.gameObject.layer == 6)
-        {
-            hitmarker.Enable();
-            hit.transform.GetComponent<ShootingSheet>().Enable();
-            hitAudioSource.PlayOneShot(Resources.Load("Audio/Bullet/Hitmarker") as AudioClip);
+            switch (effect.name)
+            {
+                case "BrickImpact":     GameObject BrickIstance = GetSpawner("BrickImpact");
+                                        InitImpact(BrickIstance);
+                                        StartCoroutine(ImpactDespawn(5f, BrickImpactSpawner.Instance, BrickIstance.transform));
+                                        break;
+                case "ConcreteImpact":  GameObject ConcreteIstance = GetSpawner("ConcreteImpact");
+                                        InitImpact(ConcreteIstance); 
+                                        StartCoroutine(ImpactDespawn(5f, ConcreteImpactSpawner.Instance, ConcreteIstance.transform));
+                                        break;   
+                case "DirtImpact":      GameObject DirtIstance = GetSpawner("DirtImpact");
+                                        InitImpact(DirtIstance); 
+                                        StartCoroutine(ImpactDespawn(5f, DirtImpactSpawner.Instance, DirtIstance.transform));
+                                        break;
+                case "FoliageImpact":   GameObject FoliageIstance = GetSpawner("FoliageImpact");
+                                        InitImpact(FoliageIstance); 
+                                        StartCoroutine(ImpactDespawn(5f, FoliageImpactSpawner.Instance, FoliageIstance.transform));
+                                        break;
+                case "GlassImpact":     GameObject GlassIstance = GetSpawner("GlassImpact");
+                                        InitImpact(GlassIstance); 
+                                        StartCoroutine(ImpactDespawn(5f, GlassImpactSpawner.Instance, GlassIstance.transform));
+                                        break; 
+                case "MetalImpact":     GameObject MetalIstance = GetSpawner("MetalImpact");
+                                        InitImpact(MetalIstance); 
+                                        StartCoroutine(ImpactDespawn(5f, MetalImpactSpawner.Instance, MetalIstance.transform));
+                                        break; 
+                case "PlasterImpact":   GameObject PlasterIstance = GetSpawner("PlasterImpact");
+                                        InitImpact(PlasterIstance); 
+                                        StartCoroutine(ImpactDespawn(5f, PlasterImpactSpawner.Instance, PlasterIstance.transform));
+                                        break; 
+                case "RockImpact":      GameObject RockIstance = GetSpawner("RockImpact");
+                                        InitImpact(RockIstance); 
+                                        StartCoroutine(ImpactDespawn(5f, RockImpactSpawner.Instance, RockIstance.transform));
+                                        break;
+                case "SkinImpact":      GameObject SkinIstance = GetSpawner("SkinImpact");
+                                        InitImpact(SkinIstance);
+                                        StartCoroutine(ImpactDespawn(5f, SkinImpactSpawner.Instance, SkinIstance.transform));
+                                        break;
+                case "WaterImpact":     GameObject WaterIstance = GetSpawner("WaterImpact");
+                                        InitImpact(WaterIstance);
+                                        StartCoroutine(ImpactDespawn(5f, WaterImpactSpawner.Instance, WaterIstance.transform));
+                                        break;
+                case "WoodImpact":      GameObject WoodIstance = GetSpawner("WoodImpact");
+                                        InitImpact(WoodIstance); 
+                                        StartCoroutine(ImpactDespawn(5f, WoodImpactSpawner.Instance, WoodIstance.transform));
+                                        break;
+                default: break;
+            }
         }
+    }
 
-        if (hit.transform.gameObject.layer == 7)
+    protected GameObject GetSpawner(string name)
+    {
+        switch (name)
         {
-            hitmarker.Enable(true);
-            hitAudioSource.PlayOneShot(Resources.Load("Audio/Bullet/Hitmarker") as AudioClip);
+            case "BrickImpact": return BrickImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            case "ConcreteImpact": return ConcreteImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            case "DirtImpact": return DirtImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            case "FoliageImpact": return FoliageImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            case "GlassImpact": return GlassImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            case "MetalImpact": return MetalImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            case "PlasterImpact": return PlasterImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            case "RockImpact": return RockImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            case "SkinImpact": return SkinImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            case "WaterImpact": return WaterImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            case "WoodImpact": return WoodImpactSpawner.Instance.Spawn(GetImpactEffect(hit.transform.gameObject), hit.transform.parent);
+            default: return null;
         }
+    }
+
+    protected void InitImpact(GameObject impact)
+    {
+        impact.transform.position = hit.point;
+        impact.transform.rotation = Quaternion.identity;
+        impact.transform.LookAt(hit.point + hit.normal);
+        impact.SetActive(true);
     }
 
     protected void CreateBulletTracer()
@@ -242,6 +306,38 @@ public class Weapon : MonoBehaviour
             crosshair.GetComponent<Crosshair>().UpdateSize(2);
     }
 
+    protected void EnableHitmarker()
+    {
+        switch (hit.transform.gameObject.layer)
+        {
+            case 6:
+                hitmarker.Enable();
+                hit.transform.GetComponent<ShootingSheet>().Enable();
+                hitAudioSource.PlayOneShot(Resources.Load("Audio/Bullet/Hitmarker") as AudioClip);
+                break;
+            case 7:
+                hitmarker.Enable(true);
+                hitAudioSource.PlayOneShot(Resources.Load("Audio/Bullet/Hitmarker") as AudioClip);
+                break;
+        }
+    }
+
+    protected void SendDamage()
+    {
+        switch (hit.transform.gameObject.layer)
+        {
+            case 7:
+                hit.transform.GetComponent<EnemyHealth>().TakeDamage(10);
+                EnemyHealthUI.Instance.ShowEnemyUI();
+                EnemyHealthUI.Instance.DisplayEnemyHP(hit.transform.GetComponent<EnemyHealth>().hP);
+                if (hit.transform.GetComponent<EnemyHealth>().hP <= 0)
+                {
+                    StartCoroutine(EnemyHealthUI.Instance.DeactivateUIAfterTime(2));
+                }
+                break;
+        }
+    }
+
     protected void Reload()
     {
         if (Input.GetKeyDown(KeyCode.R) && animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && currentAmmo < magazineSize)
@@ -269,6 +365,27 @@ public class Weapon : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         gunAudioSource.PlayOneShot(Resources.Load("Audio/Bullet/BulletDrop") as AudioClip);
+    } 
+
+    protected IEnumerator ImpactDespawn(float time, Spawner spawner, Transform obj)
+    {
+        yield return new WaitForSeconds(time);
+
+        switch (spawner)
+        {
+            case BrickImpactSpawner: BrickImpactSpawner.Instance.Despawn(obj); break;
+            case ConcreteImpactSpawner: ConcreteImpactSpawner.Instance.Despawn(obj); break;
+            case DirtImpactSpawner: DirtImpactSpawner.Instance.Despawn(obj); break;
+            case FoliageImpactSpawner: FoliageImpactSpawner.Instance.Despawn(obj); break;
+            case GlassImpactSpawner: GlassImpactSpawner.Instance.Despawn(obj); break;
+            case MetalImpactSpawner: MetalImpactSpawner.Instance.Despawn(obj); break;
+            case PlasterImpactSpawner: PlasterImpactSpawner.Instance.Despawn(obj); break;
+            case RockImpactSpawner: RockImpactSpawner.Instance.Despawn(obj); break;
+            case SkinImpactSpawner: SkinImpactSpawner.Instance.Despawn(obj); break;
+            case WaterImpactSpawner: WaterImpactSpawner.Instance.Despawn(obj); break;
+            case WoodImpactSpawner: WoodImpactSpawner.Instance.Despawn(obj); break;
+            default : break;
+        }
     }
 
     protected GameObject GetImpactEffect(GameObject impactedGameObject)

@@ -21306,7 +21306,7 @@ MonoBehaviour:
   spawnCount: 0
   prefab: {fileID: 2007605025467643602, guid: d644916c73ed8734eb2862a4ec7a4f3b, type: 3}
   pooledObjects: []
-  enemyAmount: 2
+  enemyAmount: 0
   holder: {fileID: 346516658}
 --- !u!1 &1518195095
 GameObject:

@@ -8,11 +8,11 @@ using UnityEngine.AI;
 public class MonsterAI : MonoBehaviour
 {
     [SerializeField] protected NavMeshAgent agent;
-    [SerializeField] protected Transform player => GameObject.Find("Player").transform;
     [SerializeField] protected Animator animator;
     [SerializeField] protected float attackDistance;
-    [SerializeField] protected PlayerHealth playerHealth => GameObject.Find("Player").GetComponent<PlayerHealth>();
     [SerializeField] protected EnemyHealth enemyHealth;
+    [SerializeField] protected PlayerHealth playerHealth => GameObject.Find("Player").GetComponent<PlayerHealth>();
+    [SerializeField] protected Transform player => GameObject.Find("Player").transform;
 
     protected float DistanceToPlayer => (transform.position - player.position).magnitude;
 

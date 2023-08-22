@@ -10,6 +10,7 @@ public class EnemyHealthUI : HealthUI
 
     [SerializeField] protected Image healthBorderUI;
     [SerializeField] protected Transform monsterHolder;
+    [SerializeField] public bool showUI;
 
     protected void Awake() => CreateSingleton();
 

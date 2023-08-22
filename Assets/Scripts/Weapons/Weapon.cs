@@ -328,11 +328,14 @@ public class Weapon : MonoBehaviour
         {
             case 7:
                 hit.transform.GetComponent<EnemyHealth>().TakeDamage(10);
-                EnemyHealthUI.Instance.ShowEnemyUI();
-                EnemyHealthUI.Instance.DisplayEnemyHP(hit.transform.GetComponent<EnemyHealth>().hP);
-                if (hit.transform.GetComponent<EnemyHealth>().hP <= 0)
+                if (EnemyHealthUI.Instance.showUI)
                 {
-                    StartCoroutine(EnemyHealthUI.Instance.DeactivateUIAfterTime(2));
+                    EnemyHealthUI.Instance.ShowEnemyUI();
+                    EnemyHealthUI.Instance.DisplayEnemyHP(hit.transform.GetComponent<EnemyHealth>().hP);
+                    if (hit.transform.GetComponent<EnemyHealth>().hP <= 0)
+                    {
+                        StartCoroutine(EnemyHealthUI.Instance.DeactivateUIAfterTime(2));
+                    }
                 }
                 break;
         }
